@@ -1,3 +1,4 @@
+"""Lambdas to create and delete DNS records for EC2 instances in Route53."""
 import os
 
 import boto3
@@ -7,6 +8,7 @@ HOSTED_ZONE_ID = os.getenv("HOSTED_ZONE_ID")
 
 
 def get_dns_tag(event):
+    """Get the dns DNS value for the instance."""
     instance_id = event["detail"]["instance-id"]
     ec2 = boto3.resource("ec2")
     instance = ec2.Instance(instance_id)
@@ -15,10 +17,12 @@ def get_dns_tag(event):
             if tag["Key"] == "dns-name":
                 return tag["Value"], instance.public_ip_address
     except TypeError:
-        return None, None
+        pass
+    return None, None
 
 
 def create_record(event, _context):
+    """Create the record if necessary for the instance in the event."""
     dns_prefix, instance_ip = get_dns_tag(event)
     if dns_prefix and instance_ip:
         dns_record = f"{dns_prefix}.{DOMAIN_NAME}"
@@ -43,6 +47,7 @@ def create_record(event, _context):
 
 
 def delete_record(event, _context):
+    """Delete the record if necessary for the instance in the event."""
     dns_prefix, _ = get_dns_tag(event)
     if dns_prefix:
         route53 = boto3.client("route53")

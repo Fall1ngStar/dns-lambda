@@ -1,0 +1,49 @@
+service: dns-lambda
+
+provider:
+  name: aws
+  region: eu-west-1
+  runtime: python3.8
+  memorySize: 128
+  deploymentBucket:
+  iamRoleStatements:
+    - Effect: Allow
+      Action: "ec2:*"
+      Resource: "*"
+    - Effect: Allow
+      Action: "route53:*"
+      Resource: "*"
+  environment:
+    DOMAIN_NAME: ""
+    HOSTED_ZONE_ID: ""
+
+
+functions:
+  createRecord:
+    handler: lambda.create_record
+    events:
+      - cloudwatchEvent:
+          event:
+            source:
+              - aws.ec2
+            detail-type:
+              - EC2 Instance State-change Notification
+            detail:
+              state:
+                - running
+  deleteRecord:
+    handler: lambda.delete_record
+    events:
+      - cloudwatchEvent:
+          event:
+            source:
+              - aws.ec2
+            detail-type:
+              - EC2 Instance State-change Notification
+            detail:
+              state:
+                - stopped
+                - terminated
+
+plugins:
+  - serverless-python-requirements

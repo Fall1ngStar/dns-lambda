@@ -20,7 +20,7 @@ provider:
 
 functions:
   createRecord:
-    handler: lambda.create_record
+    handler: src/dns_lambda.create_record
     events:
       - cloudwatchEvent:
           event:
@@ -32,7 +32,7 @@ functions:
               state:
                 - running
   deleteRecord:
-    handler: lambda.delete_record
+    handler: src/dns_lambda.delete_record
     events:
       - cloudwatchEvent:
           event:

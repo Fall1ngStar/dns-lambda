@@ -1,0 +1,3 @@
+export DEPLOYMENT_BUCKET=""
+export DOMAIN_NAME=""
+export HOSTED_ZONE_ID=""

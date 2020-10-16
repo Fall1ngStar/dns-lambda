@@ -3,9 +3,6 @@ import os
 
 import boto3
 
-DOMAIN_NAME = os.getenv("DOMAIN_NAME")
-HOSTED_ZONE_ID = os.getenv("HOSTED_ZONE_ID")
-
 
 def get_dns_tag(event):
     """Get the dns DNS value for the instance."""
@@ -25,9 +22,10 @@ def create_record(event, _context):
     """Create the record if necessary for the instance in the event."""
     dns_prefix, instance_ip = get_dns_tag(event)
     if dns_prefix and instance_ip:
-        dns_record = f"{dns_prefix}.{DOMAIN_NAME}"
+        domain_name = os.getenv("DOMAIN_NAME")
+        dns_record = f"{dns_prefix}.{domain_name}"
         boto3.client("route53").change_resource_record_sets(
-            HostedZoneId=HOSTED_ZONE_ID,
+            HostedZoneId=os.getenv("HOSTED_ZONE_ID"),
             ChangeBatch={
                 "Comment": f"Add {dns_prefix} EC2 record",
                 "Changes": [
@@ -51,12 +49,16 @@ def delete_record(event, _context):
     dns_prefix, _ = get_dns_tag(event)
     if dns_prefix:
         route53 = boto3.client("route53")
-        dns_record = f"{dns_prefix}.{DOMAIN_NAME}"
+        domain_name = os.getenv("DOMAIN_NAME")
+        hosted_zone_id = os.getenv("HOSTED_ZONE_ID")
+        dns_record = f"{dns_prefix}.{domain_name}"
         current_value = route53.test_dns_answer(
-            HostedZoneId=HOSTED_ZONE_ID, RecordName=dns_record, RecordType="A"
+            HostedZoneId=hosted_zone_id,
+            RecordName=dns_record,
+            RecordType="A",
         )["RecordData"][0]
         route53.change_resource_record_sets(
-            HostedZoneId=HOSTED_ZONE_ID,
+            HostedZoneId=hosted_zone_id,
             ChangeBatch={
                 "Comment": f"Add {dns_prefix} EC2 record",
                 "Changes": [

@@ -1,6 +1,8 @@
 # DNS Lambda
-<p align="center">
+<p>
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
+<a href="https://github.com/Fall1ngStar/dns-lambda/actions"><img alt="Actions Status" src="https://github.com/Fall1ngStar/dns-lambda/workflows/Code%20quality/badge.svg"></a>
+<a href="https://github.com/Fall1ngStar/dns-lambda/actions"><img alt="Actions Status" src="https://github.com/Fall1ngStar/dns-lambda/workflows/Tests/badge.svg"></a>
 </p>
 
 A Lambda that creates DNS record on EC2 startup and shutdown.
